@@ -1,3 +1,4 @@
+
 function computerPlay() {
     // random number to determine which one computer shoots out
     let num = Math.floor(Math.random() * 3);
@@ -5,74 +6,86 @@ function computerPlay() {
         return "Rock";
     } else if (num === 1) {
         return "Paper";
-    } else {
+    } else if (num === 2) {
         return "Scissors";
     }
 }
-function playRound(playerSelection, computerSelection) {
+
+function playRound(playerSelection) {
+    let computerSelection = computerPlay();
     // turns inputs into lowercase for ease
     playerSelection = playerSelection.toLowerCase();
     computerSelection = computerSelection.toLowerCase();
     // uses conditionals to play game
     if (playerSelection === "paper") {
         if (computerSelection === "paper") {
-            return "Tie"
+            tie('paper');
         } else if (computerSelection === "rock") {
-            return "You win! Computery shot rock. Paper beats Rock."
+            victory('paper', 'rock');
         } else {
-            return "You lose! Computery shot scissors. Scissors beats Paper."
+            loss('paper', 'scissors');
         }
     } else if (playerSelection === "scissors") {
         if (computerSelection === "scissors") {
-            return "Tie"
+            tie('scissors');
         } else if (computerSelection === "paper") {
-            return "You win! Computery shot paper. Scissors beats Paper."
+            victory('scissors', 'paper');
         } else {
-            return "You lose! Computery shot rock. Rock beats Scissors."
+            loss('scissors', 'rock')
         }
     } else if (playerSelection === "rock") {
         if (computerSelection === "rock") {
-            return "Tie"
+            tie('rock');
         } else if (computerSelection === "scissors") {
-            return "You win! Computery shot scissors. Rock beats Scissors."
+            victory('rock', 'scissors');
         } else {
-            return "You lose! Computery shot paper. Paper beats Rock."
+            loss('rock', 'paper');
         }
     }
 }
 
-function game() {
-    let count, playerWins = 0, computerWins = 0;
-    // for loop to play game 5 times
-    for (count = 0; count < 5; count++) {
-        let playerSelection = prompt("Rock, paper, or scissors?").toLowerCase();
-        let computerSelection = computerPlay();
-        let result = playRound(playerSelection, computerSelection);
-        console.log(result);
-        alert(result);
-
-        // counting wins of player & computer
-        if (result.includes("Tie")) {
-            // pass
-        } else if (result.includes("You win")) {
-            playerWins++;
-        } else {
-            computerWins++;
-        }
+function listenForButton() {
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+            playRound(button.id);
+        });
+    });
+};
 
 
-
-    }
-    if (playerWins > computerWins) {
-        console.log("The winner is you!");
-        alert("The winner is you!");
-    } else if (playerWins < computerWins) {
-        console.log("The winner is computery!;");
-        alert("The winner is computery!");
-    } else {
-        console.log("Tie. Boring!");
-        alert("Tie. Boring!");
-    }
+function tie(selection) {
+    const results = document.getElementById('results');
+    let result = document.createElement('p')
+    result.textContent = `It's a tie. You both shot ${selection}.`;
+    results.appendChild(result);
 }
 
-game()
+function victory(playerSelection, computerSelection) {
+    const results = document.getElementById('results');
+    let result = document.createElement('p')
+    result.textContent = `You win! Computer shot ${computerSelection}. ${playerSelection} beats ${computerSelection}.`;
+    results.appendChild(result);
+    playerWins++;
+    countWins();
+}
+
+function loss(playerSelection, computerSelection) {
+    const results = document.getElementById('results');
+    let result = document.createElement('p')
+    result.textContent = `You lose! Computer shot ${computerSelection}. ${playerSelection} loses to ${computerSelection}.`;
+    results.appendChild(result);
+    computerWins++;
+    countWins();
+}
+
+
+listenForButton();
+
+// Counting Wins.
+let playerWins = 0, computerWins = 0;
+const wins = document.getElementById('numOfWins');
+countWins();
+function countWins() {
+    wins.textContent = `Player Wins: ${playerWins}.\nComputer Wins: ${computerWins}`;
+}
